@@ -10,24 +10,8 @@ import json
 app = Flask(__name__)
 api = Api(app)
 
-# HIGH == OFF, LOW == ON
-OFF=GPIO.HIGH
-ON=GPIO.LOW
-
+from config import *
 from fandev import FanDev
-
-### CONFIG BEGIN ###
-# Create a dictionary called pins to store the pin number, name, and pin state:
-pins = {
-    17 : {'name' : 'LIGHT',    'state' : OFF},
-    18 : {'name' : 'FAN_OFF',  'state' : OFF},
-    27 : {'name' : 'FAN_LOW',  'state' : OFF},
-    22 : {'name' : 'FAN_MED',  'state' : OFF},
-    23 : {'name' : 'FAN_HIGH', 'state' : OFF}
-}
-
-database = "fan.db"
-debug=False
 
 ### CONFIG END ###
 
@@ -123,4 +107,4 @@ class FanApi(Resource):
 api.add_resource(FanApi, '/api')
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80, debug=True, use_reloader=False)
+    app.run(host='0.0.0.0', port=port, debug=True, use_reloader=False)
