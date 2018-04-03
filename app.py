@@ -14,9 +14,9 @@ from config import *
 from fandev import FanDev
 
 # Create a fan device
-# Use this line to init from the pins var above.  Note that on the first run,
+# Use this line to init from the pins var in config.py.  Note that on the first run,
 #   the database will automatically be initialized from the pins var.
-#   So, use this only if you have to make changes to the config.
+#   So, use this only if you have to make changes to the pin config, and only once.
 #fan = FanDev(database, pins, debug)
 fan = FanDev(database, False, debug)
 
