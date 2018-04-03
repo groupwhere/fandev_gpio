@@ -3,6 +3,7 @@ import inspect
 from time import sleep
 import RPi.GPIO as GPIO
 
+from config import *
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
@@ -19,7 +20,8 @@ class FanDev():
         if newpins:
             self.pins = newpins
         else:
-            self.pins = {}
+            #self.pins = {}
+            self.pins = pins
 
         self.nametopin = {}
 
@@ -84,6 +86,8 @@ class FanDev():
 
     # Initialize GPIO (pin init)
     def pininit(self):
+        if self.debug:
+            print "pininit() called"
         for pin in self.pins:
             #print(pin)
             GPIO.setup(pin, GPIO.OUT)
@@ -95,6 +99,10 @@ class FanDev():
         self.writedb()
 
     def readdb(self, newpins=False):
+        if self.debug:
+            print 'readdb(' + str(newpins) + ')'
+            print 'caller name:', inspect.stack()[1][3]
+
         conn = sqlite3.connect(self.database)
         c = conn.cursor()
 

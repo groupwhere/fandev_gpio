@@ -13,8 +13,6 @@ api = Api(app)
 from config import *
 from fandev import FanDev
 
-### CONFIG END ###
-
 # Create a fan device
 # Use this line to init from the pins var above.  Note that on the first run,
 #   the database will automatically be initialized from the pins var.
