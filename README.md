@@ -55,5 +55,9 @@ curl -H "Content-Type: application/json" -X PUT -d '{"FAN_LOW":"on"}' http://you
 
 Since we work with active lows, matching the remote circuit, 0 means the switch was activated.
 
+
+There is also newfandev.py.  This is a work in progress to set the pins back to inputs to monitor
+local keypresses at the remote, since it is still connected.
+
 Similar project:
 https://community.home-assistant.io/t/rf-ceiling-fan-remote-hack/42304
