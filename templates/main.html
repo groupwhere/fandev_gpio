@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<head>
+	<title>RPi Ceiling Fan Control</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	<script>
+	function SubmitForm(formId) {
+		var oForm = document.getElementById(formId);
+		if (oForm) {
+			oForm.submit(); 
+		}
+		else {
+			alert("DEBUG - could not find element " + formId);
+		}
+	}
+	</script>
+</head>
+<body>
+	<h2>RPi Ceiling Fan Control</h2>
+	<form action="." method="POST" id="fanform">
+		<div class="row">
+			<div class="col-md-2">
+		Light is currently 
+	{% if pins[17].state == true %}				<input type="submit" name="light" value="Off">
+	{% else %}				<input type="submit" name="light" value="On">
+	{% endif %}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-5">
+			Fan is 
+				<input type="radio" name="fanstate" onchange="SubmitForm('fanform');" value="off" {{off_sel}}>Off</input>
+				<input type="radio" name="fanstate" onchange="SubmitForm('fanform');" value="low" {{low_sel}}>Low</input>
+				<input type="radio" name="fanstate" onchange="SubmitForm('fanform');" value="med" {{med_sel}}>Medium</input>
+				<input type="radio" name="fanstate" onchange="SubmitForm('fanform');" value="high" {{high_sel}}>High</input>
+			</div>
+		</div><noscript>
+		<div class="row">
+			<div class="col-md-2">
+				<input type="submit" name="changeit" value="Go">
+			</div>
+		</div></noscript>
+	</form>
+</body>
+</html>
