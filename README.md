@@ -28,5 +28,32 @@ It uses 5 GPIO pins, in my case GPIO 17, 18, 22, 23, and 27.  Fortunately, conne
 
 fandev cycles pins low and back to high by default with a sleep time of 1/4 second.  This simulates a human operating the remote and is enough time to trigger the functions.
 
+Control:
+You can access the web interface at http://your.dev.ice.ip:port/
+From there you can switch the light on and off or set the fan to off/low/med/high.
+This is a very primitive interface.  Beautification was not my goal but I welcome submissions ;)
+
+There is also an api using flask_restful.  If you access http://your.dev.ice.ip:port/api, it should return the following:
+
+"{"17": {"state": 1, "name": "LIGHT"}, "18": {"state": 0, "name": "FAN_OFF"}, "27": {"state": 1, "name": "FAN_LOW"}, "22": {"state": 1, "name": "FAN_MED"}, "23": {"state": 1, "name": "FAN_HIGH"}}"
+
+This shows the state of all switches.  Note that this is not the actual pin state since we only toggle the pins low as needed.  But, the return value should show which condition was last set and recalled from the database.
+
+To set the light on, you can post as follows:
+
+curl -H "Content-Type: application/json" -X PUT -d '{"LIGHT":"on"}' http://your.dev.ice.ip:port/api
+
+"{"17": {"state": 0, "name": "LIGHT"}, "18": {"state": 0, "name": "FAN_OFF"}, "27": {"state": 1, "name": "FAN_LOW"}, "22": {"state": 1, "name": "FAN_MED"}, "23": {"state": 1, "name": "FAN_HIGH"}}"
+
+It doesn't matter whether you send on or off, etc.  We will toggle the condition of the light when you send anything.
+
+To set the fan to low, post as follows:
+
+curl -H "Content-Type: application/json" -X PUT -d '{"FAN_LOW":"on"}' http://your.dev.ice.ip:port/api
+
+"{"17": {"state": 1, "name": "LIGHT"}, "18": {"state": 1, "name": "FAN_OFF"}, "27": {"state": 0, "name": "FAN_LOW"}, "22": {"state": 1, "name": "FAN_MED"}, "23": {"state": 1, "name": "FAN_HIGH"}}"
+
+Since we work with active lows, matching the remote circuit, 0 means the switch was activated.
+
 Similar project:
 https://community.home-assistant.io/t/rf-ceiling-fan-remote-hack/42304
