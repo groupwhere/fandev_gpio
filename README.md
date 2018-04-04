@@ -3,7 +3,9 @@ Control a 5 switch ceiling fan remote using pi zero
 
 This was inspired by the desire to automate a ten year old ceiling fan with an RF remote.  Rather than replace the whole thing, or engineer an RF solution on my own, I opted to hack into the remote.
 
-The remote is a 5-button device with switches for Light on/off and Fan off/low/medium/high.
+The remote is a 5-button device with switches for Light on/off and Fan off/low/medium/high:
+
+![fan remote](https://github.com/groupwhere/fandev_gpio/blob/master/fanremote.jpg)
 
 Findings:
 ```
