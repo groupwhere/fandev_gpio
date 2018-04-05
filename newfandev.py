@@ -43,9 +43,13 @@ class FanDev():
         if self.debug:
             print "pininit() called"
             print 'caller name:', inspect.stack()[1][3]
+        logger.info("pininit() called")
+
         for pin in self.pins:
             if self.debug:
-                print "setting up", str(pin), "as output"
+                print "setting up GPIO ", str(pin), " as output"
+            logger.info("setting up GPIO " + str(pin) + " as output")
+
             GPIO.setup(pin, GPIO.OUT)
             if startup == True:
                 GPIO.output(pin, OFF)
@@ -58,9 +62,13 @@ class FanDev():
         if self.debug:
             print "pinread() called"
             print 'caller name:', inspect.stack()[1][3]
+        logger.info("pinread() called")
+
         for pin in self.pins:
             if self.debug:
-                print "setting up", str(pin), "as input"
+                print "setting up GPIO ", str(pin), " as input"
+            logger.info("setting up GPIO " + str(pin) + " as input")
+
             GPIO.setup(pin, GPIO.IN)
 
             if self.cbset == False:
@@ -71,6 +79,7 @@ class FanDev():
     def pinread_callback(self, channel):
         if self.debug:
             print "pinread_callback(", channel, ")"
+        logger.info("pinread_callback(" + str(channel) + ")")
 
         if self.pins[channel]['state'] == ON:
             self.pins[channel]['state'] = OFF
@@ -90,6 +99,7 @@ class FanDev():
         if self.debug:
             print "fanset(", status, ")"
             print 'caller name:', inspect.stack()[1][3]
+        logger.info("fanset(" + status + ")")
 
         # Ensure uppercase to match pin names
         action = 'FAN_' + status.upper()
@@ -108,6 +118,8 @@ class FanDev():
         if self.debug:
             print "set_gpio(", changePin, ",", setting, ")"
             print 'caller name:', inspect.stack()[1][3]
+        logger.info("set_gpio(" + str(changePin) + ", " + str(setting) + ")")
+
         GPIO.output(changePin, setting)
 
         self.pins[changePin]['state'] = setting
@@ -120,6 +132,9 @@ class FanDev():
         if self.debug:
             print "fire_gpio(", changePin, ")"
             print 'caller name:', inspect.stack()[1][3]
+
+        logger.info("fire_gpio(" + str(changePin) + ")")
+
         # We only need about 1/4 a second to cycle the chosen pin low and then back to high
         GPIO.output(changePin, ON)
         sleep(0.25)
@@ -145,6 +160,8 @@ class FanDev():
         if self.debug:
             print 'readdb(' + str(newpins) + ')'
             print 'caller name:', inspect.stack()[1][3]
+
+        logger.info("readdb(" + str(newpins) + ")")
 
         conn = sqlite3.connect(self.database)
         c = conn.cursor()
@@ -188,6 +205,9 @@ class FanDev():
         c = conn.cursor()
         if self.debug:
             print self.pins
+
+        logger.info("writedb() called")
+
         for pin in self.pins:
             c.execute("UPDATE pins SET state=? WHERE pin=?", (bool(self.pins[pin]['state']), int(pin)))
             if self.debug:
