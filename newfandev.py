@@ -42,8 +42,10 @@ class FanDev():
     def pininit(self,startup=False):
         if self.debug:
             print "pininit() called"
+            print 'caller name:', inspect.stack()[1][3]
         for pin in self.pins:
-            #print(pin)
+            if self.debug:
+                print "setting up", str(pin), "as output"
             GPIO.setup(pin, GPIO.OUT)
             if startup == True:
                 GPIO.output(pin, OFF)
@@ -55,6 +57,7 @@ class FanDev():
     def pinread(self):
         if self.debug:
             print "pinread() called"
+            print 'caller name:', inspect.stack()[1][3]
         for pin in self.pins:
             if self.debug:
                 print "setting up", str(pin), "as input"
