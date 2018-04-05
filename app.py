@@ -11,7 +11,7 @@ app = Flask(__name__)
 api = Api(app)
 
 from config import *
-from fandev import FanDev
+from newfandev import FanDev
 
 # Create a fan device
 # Use this line to init from the pins var in config.py.  Note that on the first run,
@@ -20,27 +20,22 @@ from fandev import FanDev
 #fan = FanDev(database, pins, debug)
 fan = FanDev(database, False, debug)
 
-def logit(data):
-    log = open("debug_" + datetime.datetime.now().strftime('%Y%m%d') + ".log", "a")
-    log.write(data + "\n")
-    log.close()
-
 # Following routes are for users with a browser.  Below that are API calls using JSON
 @app.route("/", methods = ['GET', 'POST'])
 def main():
     try:
         data = request.form
-        print "Received", data
+        logger.info("Received: %s", data)
         if data['light'] != None:
             fan.lightsw()
     except:
-        print "No light change received"
+        logger.info("No light change received")
 
     try:
         if data['fanstate'] != None:
             fan.fanset(data['fanstate'])
     except:
-        print "No fan change received"
+        logger.info("No fan change received")
 
     # Pass the template data into the template main.html and return it to the user
     light = fan.nametopin['LIGHT']
@@ -58,7 +53,7 @@ def main():
         else:
             off_sel = 'checked'
 
-    print "PINS:", fan.pins
+    logger.info("PINS: %s", fan.pins)
 
     # Put the pin dictionary into the template data dictionary:
     templateData = {
@@ -105,4 +100,4 @@ class FanApi(Resource):
 api.add_resource(FanApi, '/api')
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=port, debug=True, use_reloader=False)
+    app.run(host=ipaddr, port=port, debug=True, use_reloader=False)
