@@ -45,7 +45,30 @@ To set the light on, you can post as follows:
 
 curl -H "Content-Type: application/json" -X PUT -d '{"LIGHT":"on"}' http://your.dev.ice.ip:port/api
 
-"{"17": {"state": 0, "name": "LIGHT"}, "18": {"state": 0, "name": "FAN_OFF"}, "27": {"state": 1, "name": "FAN_LOW"}, "22": {"state": 1, "name": "FAN_MED"}, "23": {"state": 1, "name": "FAN_HIGH"}}"
+```json
+{
+    "17": {
+        "name": "LIGHT",
+        "state": 0
+    },
+    "18": {
+        "name": "FAN_OFF",
+        "state": 0
+    },
+    "22": {
+        "name": "FAN_MED",
+        "state": 1
+    },
+    "23": {
+        "name": "FAN_HIGH",
+        "state": 1
+    },
+    "27": {
+        "name": "FAN_LOW",
+        "state": 1
+    }
+}
+```
 
 It doesn't matter whether you send on or off, etc.  We will toggle the condition of the light when you send anything.
 
@@ -53,7 +76,30 @@ To set the fan to low, post as follows:
 
 curl -H "Content-Type: application/json" -X PUT -d '{"FAN_LOW":"on"}' http://your.dev.ice.ip:port/api
 
-"{"17": {"state": 1, "name": "LIGHT"}, "18": {"state": 1, "name": "FAN_OFF"}, "27": {"state": 0, "name": "FAN_LOW"}, "22": {"state": 1, "name": "FAN_MED"}, "23": {"state": 1, "name": "FAN_HIGH"}}"
+```json
+{
+    "17": {
+        "name": "LIGHT",
+        "state": 1
+    },
+    "18": {
+        "name": "FAN_OFF",
+        "state": 1
+    },
+    "22": {
+        "name": "FAN_MED",
+        "state": 1
+    },
+    "23": {
+        "name": "FAN_HIGH",
+        "state": 1
+    },
+    "27": {
+        "name": "FAN_LOW",
+        "state": 0
+    }
+}
+```
 
 Since we work with active lows, matching the remote circuit, 0 means the switch was activated.
 
