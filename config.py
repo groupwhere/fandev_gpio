@@ -6,6 +6,7 @@ import logging.config
 # HIGH == OFF, LOW == ON
 OFF=GPIO.HIGH
 ON=GPIO.LOW
+#BOUNCE = 2000
 
 # Logging setup
 def setup_logging(
@@ -39,10 +40,14 @@ pins = {
     23 : {'name' : 'FAN_HIGH', 'state' : OFF}
 }
 
+# default admin passwd is fanpass
+# This must be processed with md5 if you wish to change it.
+users = {
+    'admin': '182c22637d8049ff3327e161ed614f28'
+}
 ipaddr='0.0.0.0'
 port = 8080
 database = "fan.db"
-debug=False
-
+debug=True
 ### CONFIG END ###
 

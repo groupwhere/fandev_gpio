@@ -11,7 +11,8 @@ app = Flask(__name__)
 api = Api(app)
 
 from config import *
-from newfandev import FanDev
+from fandev import FanDev
+#from newfandev import FanDev
 
 # Create a fan device
 # Use this line to init from the pins var in config.py.  Note that on the first run,

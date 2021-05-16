@@ -17,6 +17,9 @@ ON=GPIO.LOW
 #
 # This is a work in progress and is being done to monitor
 # and update from local keypresses at the remote.
+#
+# See this for perhaps a better alternative
+# http://raspberry.io/projects/view/reading-and-writing-from-gpio-ports-from-python/
 class FanDev():
     def __init__(self, database=None, newpins=False, debug=False):
         self.database = database
@@ -31,55 +34,37 @@ class FanDev():
             self.pins = pins
 
         self.nametopin = {}
+        self.pininit(True)
 
         if self.database:
             self.readdb(newpins)
 
-        #self.pininit(True)
         self.fanset('OFF')
 
-    # Initialize GPIO as output
+    # Initialize GPIO as output with callback for inputs
     def pininit(self,startup=False):
         if self.debug:
-            print "pininit() called"
-            print 'caller name:', inspect.stack()[1][3]
-        logger.info("pininit() called")
+            logger.info("pininit() called")
+            logger.info("caller name: " + inspect.stack()[1][3])
 
         for pin in self.pins:
             if self.debug:
-                print "setting up GPIO ", str(pin), " as output"
-            logger.info("setting up GPIO " + str(pin) + " as output")
+                logger.info("setting up GPIO " + str(pin) + " as output")
+
+            if self.cbset == False:
+                GPIO.setup(pin, GPIO.IN)
+                GPIO.add_event_detect(pin, GPIO.FALLING, callback=self.pinread, bouncetime=2000)
+                #GPIO.add_event_detect(pin, GPIO.FALLING, callback=self.pinread, bouncetime=int(BOUNCE))
 
             GPIO.setup(pin, GPIO.OUT)
             if startup == True:
                 GPIO.output(pin, OFF)
-            else:
-                GPIO.remove_event_detect(pin)
-                self.cbset = False
-
-    # Initialize GPIO as input
-    def pinread(self):
-        if self.debug:
-            print "pinread() called"
-            print 'caller name:', inspect.stack()[1][3]
-        logger.info("pinread() called")
-
-        for pin in self.pins:
-            if self.debug:
-                print "setting up GPIO ", str(pin), " as input"
-            logger.info("setting up GPIO " + str(pin) + " as input")
-
-            GPIO.setup(pin, GPIO.IN)
-
-            if self.cbset == False:
-                GPIO.add_event_detect(pin, GPIO.FALLING, callback=self.pinread_callback, bouncetime=2000)
 
         self.cbset = True
 
-    def pinread_callback(self, channel):
+    def pinread(self, channel):
         if self.debug:
-            print "pinread_callback(", channel, ")"
-        logger.info("pinread_callback(" + str(channel) + ")")
+            logger.info("pinread(" + str(channel) + ")")
 
         if self.pins[channel]['state'] == ON:
             self.pins[channel]['state'] = OFF
@@ -92,14 +77,14 @@ class FanDev():
     def lightsw(self):
         for pin, data in self.pins.iteritems():
             if 'LIGHT' in data['name']:
+                logger.info("lightsw()");
                 self.fire_gpio(pin)
 
     # Set fan to OFF, LOW, MED, or HIGH
     def fanset(self, status='OFF'):
         if self.debug:
-            print "fanset(", status, ")"
-            print 'caller name:', inspect.stack()[1][3]
-        logger.info("fanset(" + status + ")")
+            logger.info("fanset(" + str(status) + ")")
+            logger.info("caller name: " + inspect.stack()[1][3])
 
         # Ensure uppercase to match pin names
         action = 'FAN_' + status.upper()
@@ -114,26 +99,23 @@ class FanDev():
 
     # Set a pin on or OFF
     def set_gpio(self, changePin, setting):
-        self.pininit()
+        #self.pininit()
         if self.debug:
-            print "set_gpio(", changePin, ",", setting, ")"
-            print 'caller name:', inspect.stack()[1][3]
-        logger.info("set_gpio(" + str(changePin) + ", " + str(setting) + ")")
+            logger.info("set_gpio(" + str(changePin) + "," + str(setting) + ")")
+            logger.info("caller name: " + inspect.stack()[1][3])
 
         GPIO.output(changePin, setting)
 
         self.pins[changePin]['state'] = setting
         self.writedb()
-        self.pinread()
+        #self.pinread()
 
     # Cycle a pin on then off again
     def fire_gpio(self, changePin):
-        self.pininit()
+        #self.pininit()
         if self.debug:
-            print "fire_gpio(", changePin, ")"
-            print 'caller name:', inspect.stack()[1][3]
-
-        logger.info("fire_gpio(" + str(changePin) + ")")
+            logger.info("fire_gpio(" + str(changePin) + ")")
+            logger.info("caller name: " + inspect.stack()[1][3])
 
         # We only need about 1/4 a second to cycle the chosen pin low and then back to high
         GPIO.output(changePin, ON)
@@ -145,11 +127,11 @@ class FanDev():
         else:
             self.pins[changePin]['state'] = ON
         self.writedb()
-        self.pinread()
+        #self.pinread()
 
     def checkstate(self):
-        print self.pins
-        print self.nametopin
+        logger.info(str(self.pins))
+        logger.info(str(self.nametopin))
 
     def getpins(self):
         for pin in self.pins:
@@ -158,10 +140,8 @@ class FanDev():
 
     def readdb(self, newpins=False):
         if self.debug:
-            print 'readdb(' + str(newpins) + ')'
-            print 'caller name:', inspect.stack()[1][3]
-
-        logger.info("readdb(" + str(newpins) + ")")
+            logger.info("readdb(" + str(newpins) + ")")
+            logger.info("caller name: " + inspect.stack()[1][3])
 
         conn = sqlite3.connect(self.database)
         c = conn.cursor()
@@ -182,18 +162,18 @@ class FanDev():
         if row == 0:
             # No records, insert values from pins table
             if self.debug:
-                print "NO ROWS!!!"
+                logger.error("NO ROWS!!!")
 
             for pin in self.pins:
                 c.execute('INSERT INTO pins VALUES (?, ?, ?)', (int(pin), self.pins[pin]['name'], bool(self.pins[pin]['state'])))
                 if self.debug:
-                    print "inserting row..."
+                    logger.info("inserting row...")
                 conn.commit()
 
         # Read the table
         for row in c.execute('SELECT * FROM pins'):
             if self.debug:
-                print "Reading row..."
+                logger.info("Reading row...")
             self.pins[int(row[0])] = {'name': row[1], 'state': row[2]}
             self.nametopin[row[1]] = int(row[0])
 
@@ -204,14 +184,13 @@ class FanDev():
         conn = sqlite3.connect(self.database)
         c = conn.cursor()
         if self.debug:
-            print self.pins
-
-        logger.info("writedb() called")
+            logger.info("writedb() called")
+            logger.info(str(self.pins))
 
         for pin in self.pins:
             c.execute("UPDATE pins SET state=? WHERE pin=?", (bool(self.pins[pin]['state']), int(pin)))
             if self.debug:
-                print "updating row..."
+                logger.info("updating row...")
             conn.commit()
 
 # If you send pins, it will clear the db and install the new pins

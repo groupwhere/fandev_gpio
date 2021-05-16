@@ -27,7 +27,7 @@
 		<div class="row">
 			<div class="col-md-2">
 		Light is currently 
-	{% if pins[17].state == true %}				<input type="submit" name="light" value="Off">
+	{% if pins[light].state == true %}				<input type="submit" name="light" value="Off">
 	{% else %}				<input type="submit" name="light" value="On">
 	{% endif %}
 			</div>
@@ -44,6 +44,16 @@
 		<div class="row">
 			<div class="col-md-2">
 				<input type="submit" name="changeit" value="Go">
+			</div>
+		</div></noscript>
+		<div class="row">
+			<div class="col-md-5">
+				<hr>
+			</div>
+		</div></noscript>
+		<div class="row">
+			<div class="col-md-5">
+				To change config or sync status, use the <a href="/admin">Admin</a>.
 			</div>
 		</div></noscript>
 	</form>
